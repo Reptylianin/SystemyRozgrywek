@@ -1,0 +1,220 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Strona-1" id="eL1MVu22pB1JUnnte5yd">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Rozgrywka" vertex="1">
+          <mxGeometry height="240" width="240" x="100" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-11" parent="vKdnt41V8OW1KEMjmQSI-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- listaDruzyn: ArrayList&amp;lt;Drużyna&amp;gt;" vertex="1">
+          <mxGeometry height="26" width="240" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-47" parent="vKdnt41V8OW1KEMjmQSI-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- listaWyników: ArrayList&amp;lt;Wynik&amp;gt;" vertex="1">
+          <mxGeometry height="26" width="240" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-3" parent="vKdnt41V8OW1KEMjmQSI-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- listaPunktów: HashMap&amp;lt;String, Integer&amp;gt;" vertex="1">
+          <mxGeometry height="26" width="240" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-3" parent="vKdnt41V8OW1KEMjmQSI-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="240" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-42" parent="vKdnt41V8OW1KEMjmQSI-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="# zarejestrujDrużynę(drużyna: Drużyna): void" vertex="1">
+          <mxGeometry height="44" width="240" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-7" parent="vKdnt41V8OW1KEMjmQSI-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ pokazTabele(): void" vertex="1">
+          <mxGeometry height="26" width="240" y="156" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-8" parent="vKdnt41V8OW1KEMjmQSI-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ zapiszWyniki(drużyna1: Druzyna, drużyna2: Druzyna, wynikMeczu: Wynik): void" vertex="1">
+          <mxGeometry height="58" width="240" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-5" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Drużyna" vertex="1">
+          <mxGeometry height="138" width="180" x="10" y="11" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-6" parent="vKdnt41V8OW1KEMjmQSI-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- nazwa: String" vertex="1">
+          <mxGeometry height="26" width="180" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-12" parent="vKdnt41V8OW1KEMjmQSI-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- poziomDrużyny: int" vertex="1">
+          <mxGeometry height="28" width="180" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-7" parent="vKdnt41V8OW1KEMjmQSI-5" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="10" width="180" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-45" parent="vKdnt41V8OW1KEMjmQSI-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Drużyna(nazwa: String, poziomDrużyny: int)" vertex="1">
+          <mxGeometry height="48" width="180" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-13" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Liga" vertex="1">
+          <mxGeometry height="150" width="190" x="20" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-2" parent="vKdnt41V8OW1KEMjmQSI-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- liczbaMeczowBezposrednich" vertex="1">
+          <mxGeometry height="26" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-15" parent="vKdnt41V8OW1KEMjmQSI-13" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="190" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-34" parent="vKdnt41V8OW1KEMjmQSI-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;+ pokazTabele(): void&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="190" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-9" parent="vKdnt41V8OW1KEMjmQSI-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ zapiszWyniki(drużyna1: Druzyna, drużyna2: Druzyna, wynikMeczu: Wynik): void" vertex="1">
+          <mxGeometry height="60" width="190" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-17" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Turniej" vertex="1">
+          <mxGeometry height="150" width="230" x="260" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-19" parent="vKdnt41V8OW1KEMjmQSI-17" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="230" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-35" parent="vKdnt41V8OW1KEMjmQSI-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;+ pokazTabele(): void&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="230" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-10" parent="vKdnt41V8OW1KEMjmQSI-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ zapiszWyniki(drużyna1: Druzyna, drużyna2: Druzyna, wynikMeczu: Wynik): void" vertex="1">
+          <mxGeometry height="60" width="230" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-25" parent="vKdnt41V8OW1KEMjmQSI-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="# losujParyDrużyn(): void" vertex="1">
+          <mxGeometry height="26" width="230" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-21" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Liga+turniej" vertex="1">
+          <mxGeometry height="176" width="190" x="550" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-1" parent="vKdnt41V8OW1KEMjmQSI-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- liczbaMeczowBezposrednich" vertex="1">
+          <mxGeometry height="26" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-23" parent="vKdnt41V8OW1KEMjmQSI-21" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="190" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-36" parent="vKdnt41V8OW1KEMjmQSI-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;+ pokazTabele(): void&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="190" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-11" parent="vKdnt41V8OW1KEMjmQSI-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ zapiszWyniki(drużyna1: Druzyna, drużyna2: Druzyna, wynikMeczu: Wynik): void" vertex="1">
+          <mxGeometry height="60" width="190" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-27" parent="vKdnt41V8OW1KEMjmQSI-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="# losujParyDrużyn(): void" vertex="1">
+          <mxGeometry height="26" width="190" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-25" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Grupy+turniej" vertex="1">
+          <mxGeometry height="176" width="190" x="780" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-26" parent="vKdnt41V8OW1KEMjmQSI-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- liczbaMeczowBezposrednich" vertex="1">
+          <mxGeometry height="26" width="190" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-27" parent="vKdnt41V8OW1KEMjmQSI-25" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="190" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-37" parent="vKdnt41V8OW1KEMjmQSI-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;+ pokazTabele(): void&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="190" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-12" parent="vKdnt41V8OW1KEMjmQSI-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ zapiszWyniki(drużyna1: Druzyna, drużyna2: Druzyna, wynikMeczu: Wynik): void" vertex="1">
+          <mxGeometry height="60" width="190" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-29" parent="vKdnt41V8OW1KEMjmQSI-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="# losujParyDrużyn(): void" vertex="1">
+          <mxGeometry height="26" width="190" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-38" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Wynik" vertex="1">
+          <mxGeometry height="178" width="226" x="380" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-39" parent="vKdnt41V8OW1KEMjmQSI-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- wynik: ArrayList&amp;lt;Integer&amp;gt;" vertex="1">
+          <mxGeometry height="26" width="226" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-49" parent="vKdnt41V8OW1KEMjmQSI-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- drużyna1: Drużyna" vertex="1">
+          <mxGeometry height="26" width="226" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-50" parent="vKdnt41V8OW1KEMjmQSI-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- drużyna2: Drużyna" vertex="1">
+          <mxGeometry height="26" width="226" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-40" parent="vKdnt41V8OW1KEMjmQSI-38" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="226" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-51" parent="vKdnt41V8OW1KEMjmQSI-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Wynik(drużyna1: Drużyna, drużyna2: Drużyna, wynik: ArrayList&amp;lt;int&amp;gt;)" vertex="1">
+          <mxGeometry height="38" width="226" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="vKdnt41V8OW1KEMjmQSI-41" parent="vKdnt41V8OW1KEMjmQSI-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ punktyZaMecz(): ArrayList&amp;lt;Integer&amp;gt;&amp;nbsp;" vertex="1">
+          <mxGeometry height="28" width="226" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-4" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;span style=&quot;text-align: left;&quot;&gt;ZłaLiczbaDrużynException&lt;/span&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div style=&quot;height:2px;&quot;&gt;&amp;nbsp; + ZłaLiczbaDrużynException(message: String)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="260" x="880" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-23" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;span style=&quot;text-align: left;&quot;&gt;ZaDużoMeczówBezpośrednichException&lt;/span&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div style=&quot;height:2px;&quot;&gt;&amp;nbsp; + ZaDużoMeczówBezpośrednichException(message:&amp;nbsp; &amp;nbsp; String&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="880" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-24" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;span style=&quot;text-align: left;&quot;&gt;ZłyWynikKarnychException&lt;/span&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div style=&quot;height:2px;&quot;&gt;&amp;nbsp; + ZłyWynikKarnychException(message: String)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="300" x="880" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-30" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Menu" vertex="1">
+          <mxGeometry height="60" width="160" x="690" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-32" parent="-uS7R7wKBkIiWAUy6tOx-30" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-33" parent="-uS7R7wKBkIiWAUy6tOx-30" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ uruchom(): void" vertex="1">
+          <mxGeometry height="26" width="160" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-34" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-13" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" target="vKdnt41V8OW1KEMjmQSI-1" value="Extends">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="80" y="310" as="sourcePoint" />
+            <mxPoint x="240" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-35" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-17" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" target="Q5la4AKwxKZvPc-aIjaG-1" value="Extends">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="320" y="340" as="sourcePoint" />
+            <mxPoint x="480" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-36" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-21" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" target="Q5la4AKwxKZvPc-aIjaG-1" value="Extends">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="570" y="330" as="sourcePoint" />
+            <mxPoint x="730" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-uS7R7wKBkIiWAUy6tOx-37" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-25" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" target="Q5la4AKwxKZvPc-aIjaG-1" value="Extends">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="780" y="290" as="sourcePoint" />
+            <mxPoint x="940" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Turnieje" vertex="1">
+          <mxGeometry height="174" width="253" x="574" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-2" parent="Q5la4AKwxKZvPc-aIjaG-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- listaParDrużyn: ArrayList&amp;lt;ArrayList&amp;lt;Drużyna&amp;gt;&amp;gt;" vertex="1">
+          <mxGeometry height="34" width="253" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-3" parent="Q5la4AKwxKZvPc-aIjaG-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="253" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-4" parent="Q5la4AKwxKZvPc-aIjaG-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ pokazTabele(): void" vertex="1">
+          <mxGeometry height="26" width="253" y="68" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-5" parent="Q5la4AKwxKZvPc-aIjaG-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ zapiszWyniki(drużyna1: Druzyna, drużyna2: Druzyna, wynikMeczu: Wynik): void" vertex="1">
+          <mxGeometry height="54" width="253" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-6" parent="Q5la4AKwxKZvPc-aIjaG-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="# losujParyDrużyn(): void" vertex="1">
+          <mxGeometry height="26" width="253" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-9" edge="1" parent="1" source="Q5la4AKwxKZvPc-aIjaG-1" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" target="vKdnt41V8OW1KEMjmQSI-1" value="Extends">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="370" y="90" as="sourcePoint" />
+            <mxPoint x="530" y="90" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-10" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-5" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;rounded=0;" target="vKdnt41V8OW1KEMjmQSI-1" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="250" y="140" as="sourcePoint" />
+            <mxPoint x="410" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-11" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-38" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;" target="vKdnt41V8OW1KEMjmQSI-1" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="190" y="180" as="sourcePoint" />
+            <mxPoint x="350" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q5la4AKwxKZvPc-aIjaG-12" edge="1" parent="1" source="vKdnt41V8OW1KEMjmQSI-38" style="endArrow=block;endSize=16;endFill=0;html=1;rounded=0;" target="vKdnt41V8OW1KEMjmQSI-5" value="Extends">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="210" y="110" as="sourcePoint" />
+            <mxPoint x="370" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
