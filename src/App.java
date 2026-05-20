@@ -1,6 +1,18 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+class ZłaLiczbaDrużynException extends Exception {
+    public ZłaLiczbaDrużynException(String message) {super(message);}
+}
+
+class ZaDużoMeczówBezpośrednichException extends Exception {
+    public ZaDużoMeczówBezpośrednichException(String message) {super(message);}
+}
+
+class ZłyWynikKarnychException extends Exception {
+    public ZłyWynikKarnychException(String message) {super(message);}
+}
+
 class Rozgrywka {
     private ArrayList<Drużyna> listaDrużyn;
     private ArrayList<Wynik> listaWyników;
@@ -41,6 +53,15 @@ class Rozgrywka {
 
 class Turnieje extends Rozgrywka {
     private ArrayList<ArrayList<Drużyna>> listaParDrużyn;
+
+    public Turnieje(ArrayList<ArrayList<Drużyna>> listaParDrużyn) {this.listaParDrużyn = listaParDrużyn;}
+
+    public void pokazTabele() {
+        // do zrobienia
+    }
+    public void zapiszWyniki(Drużyna druzyna1, Drużyna druzyna2, Wynik wynik) {
+        // do zrobienia
+    }
     protected void losujParyDrużyn() {
         // do zrobienia
     }
@@ -71,7 +92,7 @@ class Liga extends Rozgrywka {
 }
 
 // class Turniej extends Turnieje {
- 
+
 // }
 
 class Drużyna {
@@ -112,6 +133,12 @@ class Wynik {
     }
     public int getWynik2() {
         return wynik.get(1);
+    }
+
+    ArrayList<Integer> punktyZaMecz() {
+        //do zrobienia
+        ArrayList<Integer> a = new ArrayList<Integer>(2);
+        return a;
     }
 }
 
