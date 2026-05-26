@@ -14,7 +14,7 @@ class ZłyWynikKarnychException extends Exception {
 }
 
 class Rozgrywka {
-    private ArrayList<Drużyna> listaDrużyn;
+    protected ArrayList<Drużyna> listaDrużyn;
     private ArrayList<Wynik> listaWyników;
     private HashMap<String, Integer> listaPunktów;
     Rozgrywka() {
@@ -22,6 +22,7 @@ class Rozgrywka {
         this.listaWyników = new ArrayList<Wynik>();
         this.listaPunktów = new HashMap<String, Integer>();
     }
+
     protected void zajerestrujDrużyne(Drużyna drużyna) {
         listaDrużyn.add(drużyna);
         listaPunktów.put(drużyna.getNazwa(), 0);
@@ -62,8 +63,24 @@ class Turnieje extends Rozgrywka {
     public void zapiszWyniki(Drużyna druzyna1, Drużyna druzyna2, Wynik wynik) {
         // do zrobienia
     }
-    protected void losujParyDrużyn() {
-        // do zrobienia
+    protected void losujParyDrużyn() throws ZłaLiczbaDrużynException {
+        if (listaDrużyn.size() % 2 != 0) {
+            throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki");
+        }
+        ArrayList<Drużyna> posortowaneDrużyny = new ArrayList<>(listaDrużyn);
+        posortowaneDrużyny.sort((d1, d2) -> Integer.compare(d1.getPoziomDrużyny(), d2.getPoziomDrużyny()));
+        if (listaDrużyn == null) {listaDrużyn = new ArrayList<>();}
+        else {listaDrużyn.clear();}
+        int L = 0;
+        int P = posortowaneDrużyny.size() - 1;
+        for (int i = 0; i < posortowaneDrużyny.size() / 2; i++) {
+            ArrayList<Drużyna> para = new ArrayList<>();
+            para.add(posortowaneDrużyny.get(L));
+            para.add(posortowaneDrużyny.get(P));
+            listaParDrużyn.add(para);
+            L++;
+            P--;
+        }
     }
 }
 
@@ -84,10 +101,11 @@ class Liga extends Rozgrywka {
     @Override
     public void zapiszWyniki(Wynik wynikMeczu) {
         getListaWyników().add(wynikMeczu);
+        ArrayList<Integer> punkty = wynikMeczu.punktyZaMecz();
         Integer punktyDrużyny1 = getListaPunktów().get(wynikMeczu.getDrużyna1().getNazwa());
         Integer punktyDrużyny2 = getListaPunktów().get(wynikMeczu.getDrużyna2().getNazwa());
-        getListaPunktów().put(wynikMeczu.getDrużyna1().getNazwa(), punktyDrużyny1 + wynikMeczu.getWynik1());
-        getListaPunktów().put(wynikMeczu.getDrużyna2().getNazwa(), punktyDrużyny2 + wynikMeczu.getWynik2());
+        getListaPunktów().put(wynikMeczu.getDrużyna1().getNazwa(), punktyDrużyny1 + punkty.get(0));
+        getListaPunktów().put(wynikMeczu.getDrużyna2().getNazwa(), punktyDrużyny2 + punkty.get(1));
     }
 }
 
@@ -136,9 +154,20 @@ class Wynik {
     }
 
     ArrayList<Integer> punktyZaMecz() {
-        //do zrobienia
-        ArrayList<Integer> a = new ArrayList<Integer>(2);
-        return a;
+        ArrayList<Integer> punkty = new ArrayList<Integer>(2);
+        if (getWynik1() > getWynik2()) {
+            punkty.add(3);
+            punkty.add(0);
+        }
+        else if (getWynik1() < getWynik2()) {
+            punkty.add(0);
+            punkty.add(3);
+        }
+        else {
+            punkty.add(1);
+            punkty.add(1);
+        }
+        return punkty;
     }
 }
 
