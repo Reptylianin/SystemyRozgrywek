@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+class ZaDużoDoZwróceniaException extends Exception {
+    public ZaDużoDoZwróceniaException(String message) {super(message);}
+}
+
 class ZłaLiczbaDrużynException extends Exception {
     public ZłaLiczbaDrużynException(String message) {super(message);}
 }
@@ -342,14 +346,79 @@ class Liga extends Rozgrywka {
     public HashMap<String, HashMap<String, Integer>> getListaLiczbyMeczyBezpośrednich() {
         return listaLiczbyMeczyBezpośrednich;
     }
-    public void zwróćXDrużynPoPunktacji(int ileDrużynDoZwrócenia) {
-        // do zmiany
-        // ArrayList<Drużyna> listaDrużynDoPunktacji = new ArrayList<Drużyna>();
-        // ArrayList<Integer> listaPunktacji = new ArrayList<Integer>();
-        // for (Integer integer : getListaPunktów().keySet()) {
-            
-        // }
-        System.out.println(getListaPunktów());
+    public ArrayList<Drużyna> zwróćXDrużynPoPunktacji(int ileDrużynDoZwrócenia) throws ZaDużoDoZwróceniaException {
+        if (ileDrużynDoZwrócenia > getListaDrużyn().size()) {
+            throw new ZaDużoDoZwróceniaException("Nie ma tyle drużyn do zwrócenia.");
+        }
+        ArrayList<Drużyna> posortowaneDrużyny = new ArrayList<Drużyna>();
+        for (int i = 0; i < getListaDrużyn().size(); i++) {
+            posortowaneDrużyny.add(getListaDrużyn().get(i));
+        }
+        for (int i = 0; i < posortowaneDrużyny.size(); i++) {
+            for (int j = 1; j < posortowaneDrużyny.size() - i; j++) {
+                Drużyna d1 = posortowaneDrużyny.get(j - 1);
+                Drużyna d2 = posortowaneDrużyny.get(j);
+                int punkty1 = getListaPunktów().get(d1.getNazwa());
+                int punkty2 = getListaPunktów().get(d2.getNazwa());
+                if (punkty1 < punkty2) {
+                    posortowaneDrużyny.set(j - 1, d2);
+                    posortowaneDrużyny.set(j, d1);
+                } 
+                else if (punkty1 == punkty2) {
+                    int bramki1 = 0;
+                    for (int k = 0; k < getListaWyników().size(); k++) {
+                        Wynik w = getListaWyników().get(k);
+                        if (w.getDrużyna1().getNazwa().equals(d1.getNazwa())) {
+                            bramki1 += w.getWynik1();
+                        }
+                        else if (w.getDrużyna2().getNazwa().equals(d1.getNazwa())) {
+                            bramki1 += w.getWynik2();
+                        }
+                    }
+                    int bramki2 = 0;
+                    for (int k = 0; k < getListaWyników().size(); k++) {
+                        Wynik w = getListaWyników().get(k);
+                        if (w.getDrużyna1().getNazwa().equals(d2.getNazwa())) {
+                            bramki2 += w.getWynik1();
+                        } else if (w.getDrużyna2().getNazwa().equals(d2.getNazwa())) {
+                            bramki2 += w.getWynik2();
+                        }
+                    }
+                    if (bramki1 < bramki2) {
+                        posortowaneDrużyny.set(j - 1, d2);
+                        posortowaneDrużyny.set(j, d1);
+                    } 
+                    else if (bramki1 == bramki2) {
+                        if (d1.getPoziomDrużyny() < d2.getPoziomDrużyny()) {
+                            posortowaneDrużyny.set(j - 1, d2);
+                            posortowaneDrużyny.set(j, d1);
+                        }
+                    }
+                }
+            }
+        }
+        ArrayList<Drużyna> topDrużyny = new ArrayList<Drużyna>();
+        int limit = ileDrużynDoZwrócenia;
+        if (limit > posortowaneDrużyny.size()) {
+            limit = posortowaneDrużyny.size();
+        }
+        System.out.println("Top " + limit + " Najlepszych drużyn");
+        for (int i = 0; i < limit; i++) {
+            Drużyna d = posortowaneDrużyny.get(i);
+            int p = getListaPunktów().get(d.getNazwa());
+            int bramki = 0;
+            for (int k = 0; k < getListaWyników().size(); k++) {
+                Wynik w = getListaWyników().get(k);
+                if (w.getDrużyna1().getNazwa().equals(d.getNazwa())) {
+                    bramki += w.getWynik1();
+                } else if (w.getDrużyna2().getNazwa().equals(d.getNazwa())) {
+                    bramki += w.getWynik2();
+                }
+            }
+            System.out.println((i + 1) + ". " + d.getNazwa() + " (Punkty: " + p + " Bramki: " + bramki + " Poziom drużyny: " + d.getPoziomDrużyny() + ")");
+            topDrużyny.add(d);
+        }
+        return topDrużyny;
     }
 }
 
@@ -492,6 +561,7 @@ public class App {
         // liga1.zapiszWyniki(wynik3);
 
         // liga1.pokażTabele();
+        System.out.println(liga1.zwróćXDrużynPoPunktacji(3));
 
 
         System.out.println("\n\n");
