@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 class ZłaLiczbaDrużynException extends Exception {
     public ZłaLiczbaDrużynException(String message) {super(message);}
@@ -68,88 +69,16 @@ class Rozgrywka {
     }
 }
 
-class Turnieje extends Rozgrywka {
-    private HashMap<Integer,Drużyna> listaZwycięzcówRundy;
+class TurniejeZbiorowo extends Rozgrywka {
     private ArrayList<ArrayList<Drużyna>> listaParDrużyn;
+    private HashMap<Integer,Drużyna> listaZwycięzcówRundy;
     private int liczbaRund = 0;
-    private int obecnaRunda = 0;
-
-    public Turnieje() {
+    public TurniejeZbiorowo() {
         super();
-        this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
         this.listaParDrużyn = new ArrayList<ArrayList<Drużyna>>();
+        this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
     }
-
-    @Override
-    public void pokażTabele(){
-        for (Wynik wynikIMeczu : getListaWyników()) {
-            System.out.println(wynikIMeczu.getDrużyna1().getNazwa() + " vs " + wynikIMeczu.getDrużyna2().getNazwa());
-            System.out.println(wynikIMeczu.getWynik1() + " : " + wynikIMeczu.getWynik2());
-        }
-        System.out.println("\n\n" + getListaPunktów());
-    };
-    @Override
-    public void zapiszWyniki(Wynik wynikMeczu) throws ZłaParaDrużynException, ZaDużoMeczyWRundzieException {
-        if (getListaZwycięzcówRundy().size() > getListaParDrużyn().size()/2) {
-            throw new ZaDużoMeczyWRundzieException("Za dużo zwycięzców w rundzie");
-        }
-
-        // 
-        String nazwaDrużyny1 = wynikMeczu.getDrużyna1().getNazwa();
-        String nazwaDrużyny2 = wynikMeczu.getDrużyna2().getNazwa();
-
-        ArrayList<Integer> punkty = wynikMeczu.punktyZaMecz();
-        
-        Integer punktyDrużyny1 = getListaPunktów().get(nazwaDrużyny1);
-        Integer punktyDrużyny2 = getListaPunktów().get(nazwaDrużyny2);
-        getListaPunktów().put(nazwaDrużyny1, punktyDrużyny1 + punkty.get(0));
-        getListaPunktów().put(nazwaDrużyny2, punktyDrużyny2 + punkty.get(1));
-        // 
-
-        ArrayList<Drużyna> paraDrużyn = new ArrayList<Drużyna>();
-        paraDrużyn.add(wynikMeczu.getDrużyna1());
-        paraDrużyn.add(wynikMeczu.getDrużyna2());
-        if (!getListaParDrużyn().contains(paraDrużyn)) {
-            if (!getListaParDrużyn().contains(paraDrużyn.reversed())) {
-                throw new ZłaParaDrużynException("Taka para nie rozgrywa razem meczy");
-            }
-        }
-        for (int i=0; i<getListaParDrużyn().size(); i++){
-            if (getListaParDrużyn().get(i).contains(wynikMeczu.getZwyciężcaMeczu())) {
-                getListaZwycięzcówRundy().put(i, wynikMeczu.getZwyciężcaMeczu());
-            }
-        }
-    }
-    public void przejdźDoNastępnejRundy() throws ZaDużoRundException, ZaMałoZwyciezcowException {
-        if (obecnaRunda == liczbaRund) {
-            throw new ZaDużoRundException("Za dużo rund (powinien być już zwycięzca)");
-        }
-        if (getListaZwycięzcówRundy().size() == getListaParDrużyn().size()/2) {
-            throw new ZaMałoZwyciezcowException("Zbyt mało zwycięzców rund żeby przejść do następnej rundy");
-        }
-        listaParDrużyn.clear();
-        obecnaRunda += 1;
-        boolean czy_pominiete = false;
-        for (Integer i : getListaZwycięzcówRundy().keySet()) {
-            if (!czy_pominiete) {
-                ArrayList<Drużyna> paraDrużyn = new ArrayList<Drużyna>();
-                paraDrużyn.add(getListaZwycięzcówRundy().get(i));
-                paraDrużyn.add(getListaZwycięzcówRundy().get(i+1));
-                listaParDrużyn.add(paraDrużyn);
-                czy_pominiete = true;
-            }
-            else {
-                czy_pominiete = false;
-            }
-        }
-        if (getListaZwycięzcówRundy().size() == 1) {
-            for (Drużyna drużynaZwycięska : getListaZwycięzcówRundy().values()) {
-                System.out.println("Zwycięzca to: " + drużynaZwycięska.getNazwa());
-            }
-        }
-        getListaZwycięzcówRundy().clear();
-    }
-    protected void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException {
+    public void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException {
         if ((listaDrużynDoPar.size() & listaDrużynDoPar.size() - 1)  != 0) {
             throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki");
         }
@@ -174,6 +103,51 @@ class Turnieje extends Rozgrywka {
             liczbaRund += 1;
         }
     }
+    @Override
+    public void zapiszWyniki(Wynik wynikMeczu) throws ZłaParaDrużynException, ZaDużoMeczyWRundzieException {
+        if (getListaZwycięzcówRundy().size() > getListaParDrużyn().size()/2) {
+            throw new ZaDużoMeczyWRundzieException("Za dużo zwycięzców w rundzie");
+        }
+
+        String nazwaDrużyny1 = wynikMeczu.getDrużyna1().getNazwa();
+        String nazwaDrużyny2 = wynikMeczu.getDrużyna2().getNazwa();
+
+        ArrayList<Integer> punkty = wynikMeczu.punktyZaMecz();
+        
+        Integer punktyDrużyny1 = getListaPunktów().get(nazwaDrużyny1);
+        Integer punktyDrużyny2 = getListaPunktów().get(nazwaDrużyny2);
+        getListaPunktów().put(nazwaDrużyny1, punktyDrużyny1 + punkty.get(0));
+        getListaPunktów().put(nazwaDrużyny2, punktyDrużyny2 + punkty.get(1));    
+
+        Drużyna zwycięzca = wynikMeczu.getZwycięzcaMeczu();
+        if (zwycięzca == null) {
+            // RemisException
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Podaj która drużyna wygrywa karne(1 lub 2): \n");
+            int n = scanner.nextInt();
+            scanner.close();
+            if (n == 1) {
+                zwycięzca = wynikMeczu.getDrużyna1();   
+            }
+            else {
+                zwycięzca = wynikMeczu.getDrużyna2();
+            }
+        }
+
+        ArrayList<Drużyna> paraDrużyn = new ArrayList<Drużyna>();
+        paraDrużyn.add(wynikMeczu.getDrużyna1());
+        paraDrużyn.add(wynikMeczu.getDrużyna2());
+        if (!getListaParDrużyn().contains(paraDrużyn)) {
+            if (!getListaParDrużyn().contains(paraDrużyn.reversed())) {
+                throw new ZłaParaDrużynException("Taka para nie rozgrywa razem meczy");
+            }
+        }
+        for (int i=0; i<getListaParDrużyn().size(); i++){
+            if (getListaParDrużyn().get(i).contains(wynikMeczu.getZwycięzcaMeczu())) {
+                getListaZwycięzcówRundy().put(i, wynikMeczu.getZwycięzcaMeczu());
+            }
+        }
+    }
     public ArrayList<ArrayList<Drużyna>> getListaParDrużyn() {
         return listaParDrużyn;
     }
@@ -184,6 +158,123 @@ class Turnieje extends Rozgrywka {
         return listaZwycięzcówRundy;
     }
 }
+
+// class Turnieje extends Rozgrywka {
+//     private HashMap<Integer,Drużyna> listaZwycięzcówRundy;
+//     private ArrayList<ArrayList<Drużyna>> listaParDrużyn;
+//     private int liczbaRund = 0;
+//     private int obecnaRunda = 0;
+
+//     public Turnieje() {
+//         super();
+//         this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
+//         this.listaParDrużyn = new ArrayList<ArrayList<Drużyna>>();
+//     }
+
+//     @Override
+//     public void pokażTabele(){
+//         for (Wynik wynikIMeczu : getListaWyników()) {
+//             System.out.println(wynikIMeczu.getDrużyna1().getNazwa() + " vs " + wynikIMeczu.getDrużyna2().getNazwa());
+//             System.out.println(wynikIMeczu.getWynik1() + " : " + wynikIMeczu.getWynik2());
+//         }
+//         System.out.println("\n\n" + getListaPunktów());
+//     };
+//     @Override
+//     public void zapiszWyniki(Wynik wynikMeczu) throws ZłaParaDrużynException, ZaDużoMeczyWRundzieException {
+//         if (getListaZwycięzcówRundy().size() > getListaParDrużyn().size()/2) {
+//             throw new ZaDużoMeczyWRundzieException("Za dużo zwycięzców w rundzie");
+//         }
+
+//         // 
+//         String nazwaDrużyny1 = wynikMeczu.getDrużyna1().getNazwa();
+//         String nazwaDrużyny2 = wynikMeczu.getDrużyna2().getNazwa();
+
+//         ArrayList<Integer> punkty = wynikMeczu.punktyZaMecz();
+        
+//         Integer punktyDrużyny1 = getListaPunktów().get(nazwaDrużyny1);
+//         Integer punktyDrużyny2 = getListaPunktów().get(nazwaDrużyny2);
+//         getListaPunktów().put(nazwaDrużyny1, punktyDrużyny1 + punkty.get(0));
+//         getListaPunktów().put(nazwaDrużyny2, punktyDrużyny2 + punkty.get(1));
+//         // 
+
+//         ArrayList<Drużyna> paraDrużyn = new ArrayList<Drużyna>();
+//         paraDrużyn.add(wynikMeczu.getDrużyna1());
+//         paraDrużyn.add(wynikMeczu.getDrużyna2());
+//         if (!getListaParDrużyn().contains(paraDrużyn)) {
+//             if (!getListaParDrużyn().contains(paraDrużyn.reversed())) {
+//                 throw new ZłaParaDrużynException("Taka para nie rozgrywa razem meczy");
+//             }
+//         }
+//         for (int i=0; i<getListaParDrużyn().size(); i++){
+//             if (getListaParDrużyn().get(i).contains(wynikMeczu.getZwycięzcaMeczu())) {
+//                 getListaZwycięzcówRundy().put(i, wynikMeczu.getZwycięzcaMeczu());
+//             }
+//         }
+//     }
+//     public void przejdźDoNastępnejRundy() throws ZaDużoRundException, ZaMałoZwyciezcowException {
+//         if (obecnaRunda == liczbaRund) {
+//             throw new ZaDużoRundException("Za dużo rund (powinien być już zwycięzca)");
+//         }
+//         if (getListaZwycięzcówRundy().size() == getListaParDrużyn().size()/2) {
+//             throw new ZaMałoZwyciezcowException("Zbyt mało zwycięzców rund żeby przejść do następnej rundy");
+//         }
+//         listaParDrużyn.clear();
+//         obecnaRunda += 1;
+//         boolean czy_pominiete = false;
+//         for (Integer i : getListaZwycięzcówRundy().keySet()) {
+//             if (!czy_pominiete) {
+//                 ArrayList<Drużyna> paraDrużyn = new ArrayList<Drużyna>();
+//                 paraDrużyn.add(getListaZwycięzcówRundy().get(i));
+//                 paraDrużyn.add(getListaZwycięzcówRundy().get(i+1));
+//                 listaParDrużyn.add(paraDrużyn);
+//                 czy_pominiete = true;
+//             }
+//             else {
+//                 czy_pominiete = false;
+//             }
+//         }
+//         if (getListaZwycięzcówRundy().size() == 1) {
+//             for (Drużyna drużynaZwycięska : getListaZwycięzcówRundy().values()) {
+//                 System.out.println("Zwycięzca to: " + drużynaZwycięska.getNazwa());
+//             }
+//         }
+//         getListaZwycięzcówRundy().clear();
+//     }
+//     protected void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException {
+//         if ((listaDrużynDoPar.size() & listaDrużynDoPar.size() - 1)  != 0) {
+//             throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki");
+//         }
+//         ArrayList<Drużyna> posortowaneDrużyny = new ArrayList<>(listaDrużynDoPar);
+//         posortowaneDrużyny.sort((d1, d2) -> Integer.compare(d1.getPoziomDrużyny(), d2.getPoziomDrużyny()));
+//         int L = 0;
+//         int P = posortowaneDrużyny.size() - 1;
+//         for (int i = 0; i < posortowaneDrużyny.size() / 2; i++) {
+//             ArrayList<Drużyna> para = new ArrayList<>();
+//             para.add(posortowaneDrużyny.get(L));
+//             para.add(posortowaneDrużyny.get(P));
+//             listaParDrużyn.add(para);
+//             L++;
+//             P--;
+//         }
+//         int liczbaDzielona = listaParDrużyn.size();
+//         while (liczbaDzielona != 0 && liczbaDzielona % 2 == 0) {
+//             liczbaDzielona = liczbaDzielona / 2;
+//             liczbaRund += 1;
+//         } 
+//         if (liczbaRund != 0) {
+//             liczbaRund += 1;
+//         }
+//     }
+//     public ArrayList<ArrayList<Drużyna>> getListaParDrużyn() {
+//         return listaParDrużyn;
+//     }
+//     public int getLiczbaRund() {
+//         return liczbaRund;
+//     }
+//     public HashMap<Integer, Drużyna> getListaZwycięzcówRundy() {
+//         return listaZwycięzcówRundy;
+//     }
+// }
 
 class Liga extends Rozgrywka {
     private int liczbaMeczyBezpośrednich;
@@ -262,21 +353,29 @@ class Liga extends Rozgrywka {
     }
 }
 
-class LigaPlusTurniej extends Turnieje {
-    private int liczbaDrużynDoEtapuTurnieju;
-    private Liga etapLigi;
-    public LigaPlusTurniej(int liczbaMeczBezpośrednich, int liczbaDrużynDoEtapuTurnieju) throws IllegalArgumentException {
-        if ((liczbaDrużynDoEtapuTurnieju & liczbaDrużynDoEtapuTurnieju - 1)  != 0) {
-            throw new IllegalArgumentException("Niepoprawna liczba drużyn do etapu turnieju");
-        }
-        super();
-        this.etapLigi = new Liga(liczbaMeczBezpośrednich);
-        this.liczbaDrużynDoEtapuTurnieju = liczbaDrużynDoEtapuTurnieju;
-    }
-    public Liga getEtapLigi() {
-        return etapLigi;
-    }
-}
+// class LigaPlusTurniej extends Turnieje {
+//     private int liczbaDrużynDoEtapuTurnieju;
+//     private Liga etapLigi;
+//     public LigaPlusTurniej(int liczbaMeczBezpośrednich, int liczbaDrużynDoEtapuTurnieju) throws IllegalArgumentException {
+//         if ((liczbaDrużynDoEtapuTurnieju & liczbaDrużynDoEtapuTurnieju - 1)  != 0) {
+//             throw new IllegalArgumentException("Niepoprawna liczba drużyn do etapu turnieju");
+//         }
+//         super();
+//         this.etapLigi = new Liga(liczbaMeczBezpośrednich);
+//         this.liczbaDrużynDoEtapuTurnieju = liczbaDrużynDoEtapuTurnieju;
+//     }
+//     public Liga getEtapLigi() {
+//         return etapLigi;
+//     }
+// }
+
+// class GrupyPlusTurniej {
+//     private int liczby_grup;
+
+//     public GrupyPlusTurniej() {
+//     }
+
+// }
 
 // class Turniej extends Turnieje {
 //     public Turniej() {
@@ -314,7 +413,7 @@ class Drużyna {
 }
 
 class Wynik {
-    private Drużyna zwyciężcaMeczu;
+    private Drużyna zwycięzcaMeczu;
     private ArrayList<Integer> wynik;
     private Drużyna drużyna1;
     private Drużyna drużyna2;
@@ -338,8 +437,8 @@ class Wynik {
     public int getWynik2() {
         return wynik.get(1);
     }
-    public Drużyna getZwyciężcaMeczu() {
-        return zwyciężcaMeczu;
+    public Drużyna getZwycięzcaMeczu() {
+        return zwycięzcaMeczu;
     }
 
     public ArrayList<Integer> punktyZaMecz() {
@@ -347,12 +446,12 @@ class Wynik {
         if (getWynik1() > getWynik2()) {
             punkty.add(3);
             punkty.add(0);
-            zwyciężcaMeczu = drużyna1;
+            zwycięzcaMeczu = drużyna1;
         }
         else if (getWynik1() < getWynik2()) {
             punkty.add(0);
             punkty.add(3);
-            zwyciężcaMeczu = drużyna2;
+            zwycięzcaMeczu = drużyna2;
         }
         else {
             punkty.add(1);
@@ -397,69 +496,69 @@ public class App {
 
         System.out.println("\n\n");
         // Turnieje
-        Turnieje turnieje1 = new Turnieje();
-        turnieje1.zajerestrujDrużyne(drużynaA);
-        turnieje1.zajerestrujDrużyne(drużynaB);
-        turnieje1.zajerestrujDrużyne(drużynaC);
-        turnieje1.zajerestrujDrużyne(drużynaD);
-        turnieje1.losujParyDrużyn(turnieje1.getListaDrużyn());
-        for (ArrayList<Drużyna> para_drużyn : turnieje1.getListaParDrużyn()) {
-            System.out.println(para_drużyn.get(0).getNazwa() + " " + para_drużyn.get(1).getNazwa());
-        }
+        // Turnieje turnieje1 = new Turnieje();
+        // turnieje1.zajerestrujDrużyne(drużynaA);
+        // turnieje1.zajerestrujDrużyne(drużynaB);
+        // turnieje1.zajerestrujDrużyne(drużynaC);
+        // turnieje1.zajerestrujDrużyne(drużynaD);
+        // turnieje1.losujParyDrużyn(turnieje1.getListaDrużyn());
+        // for (ArrayList<Drużyna> para_drużyn : turnieje1.getListaParDrużyn()) {
+        //     System.out.println(para_drużyn.get(0).getNazwa() + " " + para_drużyn.get(1).getNazwa());
+        // }
 
-        if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
-            for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
-                System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
-            }   
-            System.out.println("\n");
-        }
+        // if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
+        //     for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
+        //         System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
+        //     }   
+        //     System.out.println("\n");
+        // }
 
-        ArrayList<Integer> wynikmeczuT1 = new ArrayList<Integer>();
-        wynikmeczuT1.add(0);
-        wynikmeczuT1.add(1);
-        Wynik wynikT1 = new Wynik(drużynaA, drużynaD, wynikmeczuT1);
-        turnieje1.zapiszWyniki(wynikT1);
+        // ArrayList<Integer> wynikmeczuT1 = new ArrayList<Integer>();
+        // wynikmeczuT1.add(0);
+        // wynikmeczuT1.add(1);
+        // Wynik wynikT1 = new Wynik(drużynaA, drużynaD, wynikmeczuT1);
+        // turnieje1.zapiszWyniki(wynikT1);
 
-        ArrayList<Integer> wynikmeczuT2 = new ArrayList<Integer>();
-        wynikmeczuT2.add(3);
-        wynikmeczuT2.add(1);
-        Wynik wynikT2 = new Wynik(drużynaB, drużynaC, wynikmeczuT2);
-        turnieje1.zapiszWyniki(wynikT2);
+        // ArrayList<Integer> wynikmeczuT2 = new ArrayList<Integer>();
+        // wynikmeczuT2.add(3);
+        // wynikmeczuT2.add(1);
+        // Wynik wynikT2 = new Wynik(drużynaB, drużynaC, wynikmeczuT2);
+        // turnieje1.zapiszWyniki(wynikT2);
 
-        // System.out.println(test1.getListaParDrużyn());
-        turnieje1.przejdźDoNastępnejRundy();
+        // // System.out.println(test1.getListaParDrużyn());
+        // turnieje1.przejdźDoNastępnejRundy();
 
-        if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
-            for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
-                System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
-            }   
-        }
+        // if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
+        //     for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
+        //         System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
+        //     }   
+        // }
 
-        ArrayList<Integer> wynikmeczuT3 = new ArrayList<Integer>();
-        wynikmeczuT3.add(3);
-        wynikmeczuT3.add(1);
-        Wynik wynikT3 = new Wynik(drużynaB, drużynaD, wynikmeczuT3);
-        turnieje1.zapiszWyniki(wynikT3);
+        // ArrayList<Integer> wynikmeczuT3 = new ArrayList<Integer>();
+        // wynikmeczuT3.add(3);
+        // wynikmeczuT3.add(1);
+        // Wynik wynikT3 = new Wynik(drużynaB, drużynaD, wynikmeczuT3);
+        // turnieje1.zapiszWyniki(wynikT3);
 
-        turnieje1.przejdźDoNastępnejRundy();
+        // turnieje1.przejdźDoNastępnejRundy();
 
-        if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
-            for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
-                System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
-            }   
-        }
-        // test1.pokażTabele();
+        // if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
+        //     for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
+        //         System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
+        //     }   
+        // }
+        // // test1.pokażTabele();
 
 
-        System.out.println("\n\n");
-        // Liga + Turniej
-        LigaPlusTurniej ligaPTurniej1 = new LigaPlusTurniej(2, 2);
-        ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaA);
-        ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaB);
-        ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaC);
-        ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaD);
-        ligaPTurniej1.getEtapLigi().zapiszWyniki(wynik1);
-        ligaPTurniej1.getEtapLigi().pokażTabele();
-        ligaPTurniej1.getEtapLigi().zwróćXDrużynPoPunktacji(1);
+        // System.out.println("\n\n");
+        // // Liga + Turniej
+        // LigaPlusTurniej ligaPTurniej1 = new LigaPlusTurniej(2, 2);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaA);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaB);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaC);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaD);
+        // ligaPTurniej1.getEtapLigi().zapiszWyniki(wynik1);
+        // ligaPTurniej1.getEtapLigi().pokażTabele();
+        // ligaPTurniej1.getEtapLigi().zwróćXDrużynPoPunktacji(1);
     }
 }
