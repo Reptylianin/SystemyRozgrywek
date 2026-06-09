@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 
 class ZaDużoDoZwróceniaException extends Exception {
@@ -77,7 +78,7 @@ class Rozgrywka {
 class TurniejeZbiorowo extends Rozgrywka {
     private ArrayList<ArrayList<Drużyna>> listaParDrużyn;
     private HashMap<Integer,Drużyna> listaZwycięzcówRundy;
-    private int liczbaRund = 0;
+    protected int liczbaRund = 0;
 
     public TurniejeZbiorowo() {
         super();
@@ -111,7 +112,7 @@ class TurniejeZbiorowo extends Rozgrywka {
     }
     @Override
     public void zapiszWyniki(Wynik wynikMeczu) throws ZłaParaDrużynException, ZaDużoMeczyWRundzieException {
-        if (getListaZwycięzcówRundy().size() > getListaParDrużyn().size()/2) {
+        if (getListaZwycięzcówRundy().size() >= getListaParDrużyn().size()) {
             throw new ZaDużoMeczyWRundzieException("Za dużo zwycięzców w rundzie");
         }
         String nazwaDrużyny1 = wynikMeczu.getDrużyna1().getNazwa();
@@ -130,7 +131,7 @@ class TurniejeZbiorowo extends Rozgrywka {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Podaj która drużyna wygrywa karne(1 lub 2): \n");
             int n = scanner.nextInt();
-            scanner.close();
+            //scanner.close();
             if (n == 1) {
                 zwycięzca = wynikMeczu.getDrużyna1();   
             }
@@ -146,9 +147,10 @@ class TurniejeZbiorowo extends Rozgrywka {
                 throw new ZłaParaDrużynException("Taka para nie rozgrywa razem meczy");
             }
         }
-        for (int i=0; i<getListaParDrużyn().size(); i++){
-            if (getListaParDrużyn().get(i).contains(wynikMeczu.getZwycięzcaMeczu())) {
-                getListaZwycięzcówRundy().put(i, wynikMeczu.getZwycięzcaMeczu());
+        for (int i = 0; i < getListaParDrużyn().size(); i++){
+            // Zamiast pytać wynikMeczu, używamy naszej zmiennej lokalnej 'zwycięzca'
+            if (getListaParDrużyn().get(i).contains(zwycięzca)) {
+                getListaZwycięzcówRundy().put(i, zwycięzca);
             }
         }
     }
@@ -207,6 +209,32 @@ class Turniej extends TurniejeZbiorowo {
         }
         getListaZwycięzcówRundy().clear();
     }
+
+    public void losujParyZKoszykow(ArrayList<Drużyna> listaPierwszychMiejsc, ArrayList<Drużyna> listaDrugichMiejsc) {
+        getListaParDrużyn().clear(); // Czyścimy listę par z klasy bazowej
+        int iloscGrup = listaPierwszychMiejsc.size();
+
+        for (int i = 0; i < iloscGrup; i++) {
+            ArrayList<Drużyna> para = new ArrayList<>();
+            para.add(listaPierwszychMiejsc.get(i));
+
+            // Trik przesunięcia indeksu o 1. Dzięki temu nigdy nie zagra z drużyną ze swojej grupy!
+            int indeksPrzeciwnika = (i + 1) % iloscGrup;
+            para.add(listaDrugichMiejsc.get(indeksPrzeciwnika));
+
+            getListaParDrużyn().add(para);
+        }
+
+        int liczbaDzielona = getListaParDrużyn().size();
+        liczbaRund = 0;
+        while (liczbaDzielona != 0 && liczbaDzielona % 2 == 0) {
+            liczbaDzielona = liczbaDzielona / 2;
+            liczbaRund += 1;
+        }
+        if (liczbaRund != 0) {
+            liczbaRund += 1;
+        }
+    }
 }
 
 class Liga extends Rozgrywka {
@@ -245,7 +273,7 @@ class Liga extends Rozgrywka {
             System.out.println(wynikIMeczu.getWynik1() + " : " + wynikIMeczu.getWynik2());
         }
         System.out.println("\n\nLista punktów: " + getListaPunktów());
-        System.out.println("\n\nLista liczby zagranych meczów bezpośrednich:" + getListaLiczbyMeczyBezpośrednich());
+        //System.out.println("\n\nLista liczby zagranych meczów bezpośrednich:" + getListaLiczbyMeczyBezpośrednich());
     }
     @Override
     public void zapiszWyniki(Wynik wynikMeczu) throws ZaDużoMeczówBezpośrednichException {
@@ -349,6 +377,215 @@ class Liga extends Rozgrywka {
         }
         return topDrużyny;
     }
+    //--------------------------------------------------------------------------------------
+    public void rozegrajMeczeRecznie() throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n===LIGA===");
+
+        for (int i = 0; i < getListaDrużyn().size(); i++) {
+            for (int j = i + 1; j < getListaDrużyn().size(); j++) {
+                Drużyna d1 = getListaDrużyn().get(i);
+                Drużyna d2 = getListaDrużyn().get(j);
+
+                System.out.println("\nMECZ: " + d1.getNazwa() + " vs " + d2.getNazwa());
+
+                System.out.print("Podaj gole dla " + d1.getNazwa() + ": ");
+                int goleD1 = scanner.nextInt();
+
+                System.out.print("Podaj gole dla " + d2.getNazwa() + ": ");
+                int goleD2 = scanner.nextInt();
+
+                ArrayList<Integer> wynik = new ArrayList<>();
+                wynik.add(goleD1);
+                wynik.add(goleD2);
+
+                Wynik wpisanyWynik = new Wynik(d1, d2, wynik);
+
+                try {
+                    zapiszWyniki(wpisanyWynik);
+                    System.out.println("Zapisano wynik: " + goleD1 + ":" + goleD2);
+                } catch (ZaDużoMeczówBezpośrednichException e) {
+                    System.out.println("BŁĄD ZAPISU: " + e.getMessage());
+                }
+            }
+        }
+    }
+    //--------------------------------------------------------------------------------------
+
+}
+
+class GrupyPlusTurniej extends TurniejeZbiorowo {
+    private int liczbaDrużyn;
+    private int liczbaGrup;
+
+    private ArrayList<ArrayList<Drużyna>> listaKoszyków = new ArrayList<>();
+    private ArrayList<ArrayList<Drużyna>> listaGrup = new ArrayList<>();
+    private ArrayList<ArrayList<Drużyna>> listaPar = new ArrayList<>();
+
+    private ArrayList<Drużyna> listaPierwszychMiejsc = new ArrayList<>();
+    private ArrayList<Drużyna> listaDrugichMiejsc = new ArrayList<>();
+
+    public ArrayList<Drużyna> getListaPierwszychMiejsc() {return listaPierwszychMiejsc;}
+    public ArrayList<Drużyna> getListaDrugichMiejsc() {return listaDrugichMiejsc;}
+
+    public GrupyPlusTurniej(int liczbaDrużyn) throws ZłaLiczbaDrużynException {
+        super();
+        if (liczbaDrużyn % 2 == 0) {
+            this.liczbaDrużyn = liczbaDrużyn;
+            this.liczbaGrup = liczbaDrużyn / 4; // DOPIERO TUTAJ obliczamy, gdy mamy już liczbę drużyn!
+        }
+        else {throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn");}
+    }
+
+    /*protected void losujGrupy() {
+        ArrayList<Drużyna> posortowaneDrużyny = new ArrayList<>(listaDrużyn);
+        posortowaneDrużyny.sort((d1, d2) -> Integer.compare(d1.getPoziomDrużyny(), d2.getPoziomDrużyny()));
+        if (listaDrużyn == null) {listaDrużyn = new ArrayList<>();}
+        else {listaDrużyn.clear();}
+        if (listaKoszyków == null) {listaKoszyków = new ArrayList<>();}
+        else {listaKoszyków.clear();}
+        for (int i = 0; i < posortowaneDrużyny.size() - 3; i+=4) {
+            ArrayList<Drużyna> koszyk = new ArrayList<>();
+            koszyk.add(posortowaneDrużyny.get(i));
+            koszyk.add(posortowaneDrużyny.get(i+1));
+            koszyk.add(posortowaneDrużyny.get(i+2));
+            koszyk.add(posortowaneDrużyny.get(i+3));
+            listaKoszyków.add(koszyk);
+        }
+        Random rnd = new Random();
+        for (int i = 0; i < liczbaGrup; i++) {
+            ArrayList<Drużyna> grupa = new ArrayList<>();
+            int los = rnd.nextInt(4-i);
+            grupa.add(listaKoszyków.get(0).get(los));
+            listaKoszyków.get(0).remove(los);
+            los = rnd.nextInt(4-i);
+            grupa.add(listaKoszyków.get(1).get(los));
+            listaKoszyków.get(1).remove(los);
+            los = rnd.nextInt(4-i);
+            grupa.add(listaKoszyków.get(2).get(los));
+            listaKoszyków.get(2).remove(los);
+            los = rnd.nextInt(4-i);
+            grupa.add(listaKoszyków.get(3).get(los));
+            listaKoszyków.get(3).remove(los);
+            los = rnd.nextInt(4-i);
+            listaGrup.add(grupa);
+        }
+    }*/
+    protected void losujGrupy() {
+        ArrayList<Drużyna> posortowaneDrużyny = new ArrayList<>(listaDrużyn);
+        posortowaneDrużyny.sort((d1, d2) -> Integer.compare(d1.getPoziomDrużyny(), d2.getPoziomDrużyny()));
+        listaKoszyków.clear();
+        listaGrup.clear();
+
+        for (int i = 0; i < 4; i++) {
+            listaKoszyków.add(new ArrayList<>());
+        }
+        int teamIndex = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < liczbaGrup; j++) {
+                listaKoszyków.get(i).add(posortowaneDrużyny.get(teamIndex));
+                teamIndex++;
+            }
+        }
+
+        Random rnd = new Random();
+        for (int i = 0; i < liczbaGrup; i++) {
+            ArrayList<Drużyna> grupa = new ArrayList<>();
+            for (int j = 0; j < 4; j++) {
+                int los = rnd.nextInt(listaKoszyków.get(j).size());
+                grupa.add(listaKoszyków.get(j).get(los));
+                listaKoszyków.get(j).remove(los);
+            }
+            listaGrup.add(grupa);
+        }
+        System.out.println("Zakończono losowanie do grup");
+    }
+
+    /*protected void losujParyZKoszykow() {
+        Random rnd = new Random();
+        for (int i = 0; i < listaPierwszychMiejsc.size(); i++) {
+            ArrayList<Drużyna> para = new ArrayList<>();
+            para.add(listaPierwszychMiejsc.get(i));
+            int los = rnd.nextInt(listaPierwszychMiejsc.size() - i);
+            do {
+                los = rnd.nextInt(listaDrugichMiejsc.size() - i);
+            } while (los == i);
+            para.add(listaDrugichMiejsc.get(los));
+            listaPar.add(para);
+            listaDrugichMiejsc.remove(los);
+        }
+    }*/
+
+    protected void stwórzLigi() throws Exception {
+        for (int i = 0; i < liczbaGrup; i++) {
+            System.out.println("\n==================================");
+            System.out.println("GRUPA " + (i+1));
+            System.out.println("==================================");
+
+            ArrayList<Drużyna> aktualnaGrupa = listaGrup.get(i);
+            Liga fazaGrupowa = new Liga(1);
+
+            for (Drużyna d : aktualnaGrupa) {
+                fazaGrupowa.zajerestrujDrużyne(d);
+            }
+
+            fazaGrupowa.rozegrajMeczeRecznie();
+
+            System.out.println("\n---TABELA GRUPY " + (i+1) + "---");
+            fazaGrupowa.pokażTabele();
+
+            ArrayList<Drużyna> awans = fazaGrupowa.zwróćXDrużynPoPunktacji(2);
+            listaPierwszychMiejsc.add(awans.get(0));
+            listaDrugichMiejsc.add(awans.get(1));
+        }
+    }
+
+    protected void awanse(Liga fazaGrupowa) throws ZaDużoDoZwróceniaException {
+        for (int i = 0; i < liczbaGrup; i++) {
+            ArrayList<Drużyna> awans = fazaGrupowa.zwróćXDrużynPoPunktacji(2);
+            listaPierwszychMiejsc.add(awans.get(0));
+            listaDrugichMiejsc.add(awans.get(1));
+        }
+    }
+
+    protected void fazapucharowa() throws ZaDużoMeczyWRundzieException, ZłaParaDrużynException, ZaMałoZwyciezcowException, ZaDużoRundException {
+        Turniej fazaPucharowa = new Turniej();
+
+        for (Drużyna d : listaPierwszychMiejsc) { fazaPucharowa.zajerestrujDrużyne(d); }
+        for (Drużyna d : listaDrugichMiejsc) { fazaPucharowa.zajerestrujDrużyne(d); }
+
+        fazaPucharowa.losujParyZKoszykow(listaPierwszychMiejsc, listaDrugichMiejsc);
+        Scanner scanner = new Scanner(System.in);
+
+        while (fazaPucharowa.getListaParDrużyn().size() > 0) {
+            int liczbaMeczow = fazaPucharowa.getListaParDrużyn().size();
+            System.out.println("\n--- ETAP: " + (liczbaMeczow == 1 ? "WIELKI FINAŁ" : liczbaMeczow + " MECZE") + " ---");
+
+            for (ArrayList<Drużyna> para : fazaPucharowa.getListaParDrużyn()) {
+                Drużyna d1 = para.get(0);
+                Drużyna d2 = para.get(1);
+
+                System.out.println("\nMECZ: " + d1.getNazwa() + " vs " + d2.getNazwa());
+                System.out.print("Podaj gole dla " + d1.getNazwa() + ": ");
+                int goleD1 = scanner.nextInt();
+                System.out.print("Podaj gole dla " + d2.getNazwa() + ": ");
+                int goleD2 = scanner.nextInt();
+
+                ArrayList<Integer> bramki = new ArrayList<>();
+                bramki.add(goleD1);
+                bramki.add(goleD2);
+
+                Wynik wynikMeczu = new Wynik(d1, d2, bramki);
+                fazaPucharowa.zapiszWyniki(wynikMeczu);
+            }
+            fazaPucharowa.przejdźDoNastępnejRundy();
+
+            if (liczbaMeczow == 1) {
+                break;
+            }
+        }
+
+    }
 }
 
 class Drużyna {
@@ -446,60 +683,130 @@ public class App {
         // liga1.zapiszWyniki(wynik3);
 
         // liga1.pokażTabele();
-        // System.out.println(liga1.zwróćXDrużynPoPunktacji(3));
+        System.out.println(liga1.zwróćXDrużynPoPunktacji(3));
 
+
+        System.out.println("\n\n");
         // Turnieje
-        // Turnieje
-        Turniej turniej1 = new Turniej();
-        turniej1.zajerestrujDrużyne(drużynaA);
-        turniej1.zajerestrujDrużyne(drużynaB);
-        turniej1.zajerestrujDrużyne(drużynaC);
-        turniej1.zajerestrujDrużyne(drużynaD);
-        turniej1.losujParyDrużyn(turniej1.getListaDrużyn());
-        // for (ArrayList<Drużyna> para_drużyn : turniej1.getListaParDrużyn()) {
+        // Turnieje turnieje1 = new Turnieje();
+        // turnieje1.zajerestrujDrużyne(drużynaA);
+        // turnieje1.zajerestrujDrużyne(drużynaB);
+        // turnieje1.zajerestrujDrużyne(drużynaC);
+        // turnieje1.zajerestrujDrużyne(drużynaD);
+        // turnieje1.losujParyDrużyn(turnieje1.getListaDrużyn());
+        // for (ArrayList<Drużyna> para_drużyn : turnieje1.getListaParDrużyn()) {
         //     System.out.println(para_drużyn.get(0).getNazwa() + " " + para_drużyn.get(1).getNazwa());
         // }
 
-        // if (turniej1.getListaParDrużyn().get(0).get(1) != null) {
-        //     for (ArrayList<Drużyna> paraDrużyn : turniej1.getListaParDrużyn()) {
+        // if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
+        //     for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
         //         System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
-        //     }   
+        //     }
         //     System.out.println("\n");
         // }
 
-        ArrayList<Integer> wynikmeczuT1 = new ArrayList<Integer>();
-        wynikmeczuT1.add(0);
-        wynikmeczuT1.add(1);
-        Wynik wynikT1 = new Wynik(drużynaA, drużynaD, wynikmeczuT1);
-        turniej1.zapiszWyniki(wynikT1);
+        // ArrayList<Integer> wynikmeczuT1 = new ArrayList<Integer>();
+        // wynikmeczuT1.add(0);
+        // wynikmeczuT1.add(1);
+        // Wynik wynikT1 = new Wynik(drużynaA, drużynaD, wynikmeczuT1);
+        // turnieje1.zapiszWyniki(wynikT1);
 
-        ArrayList<Integer> wynikmeczuT2 = new ArrayList<Integer>();
-        wynikmeczuT2.add(3);
-        wynikmeczuT2.add(1);
-        Wynik wynikT2 = new Wynik(drużynaB, drużynaC, wynikmeczuT2);
-        turniej1.zapiszWyniki(wynikT2);
+        // ArrayList<Integer> wynikmeczuT2 = new ArrayList<Integer>();
+        // wynikmeczuT2.add(3);
+        // wynikmeczuT2.add(1);
+        // Wynik wynikT2 = new Wynik(drużynaB, drużynaC, wynikmeczuT2);
+        // turnieje1.zapiszWyniki(wynikT2);
 
-        turniej1.przejdźDoNastępnejRundy();
+        // // System.out.println(test1.getListaParDrużyn());
+        // turnieje1.przejdźDoNastępnejRundy();
 
-        // if (turniej1.getListaParDrużyn().get(0).get(1) != null) {
-        //     for (ArrayList<Drużyna> paraDrużyn : turniej1.getListaParDrużyn()) {
+        // if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
+        //     for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
         //         System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
-        //     }   
+        //     }
         // }
 
-        ArrayList<Integer> wynikmeczuT3 = new ArrayList<Integer>();
-        wynikmeczuT3.add(3);
-        wynikmeczuT3.add(1);
-        Wynik wynikT3 = new Wynik(drużynaB, drużynaD, wynikmeczuT3);
-        turniej1.zapiszWyniki(wynikT3);
+        // ArrayList<Integer> wynikmeczuT3 = new ArrayList<Integer>();
+        // wynikmeczuT3.add(3);
+        // wynikmeczuT3.add(1);
+        // Wynik wynikT3 = new Wynik(drużynaB, drużynaD, wynikmeczuT3);
+        // turnieje1.zapiszWyniki(wynikT3);
 
-        turniej1.przejdźDoNastępnejRundy();
+        // turnieje1.przejdźDoNastępnejRundy();
 
-        if (turniej1.getListaParDrużyn().get(0).get(1) != null) {
-            for (ArrayList<Drużyna> paraDrużyn : turniej1.getListaParDrużyn()) {
-                System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
-            }   
+        // if (turnieje1.getListaParDrużyn().get(0).get(1) != null) {
+        //     for (ArrayList<Drużyna> paraDrużyn : turnieje1.getListaParDrużyn()) {
+        //         System.out.println("Para: " + paraDrużyn.get(0).getNazwa() + " " + paraDrużyn.get(1).getNazwa());
+        //     }
+        // }
+        // // test1.pokażTabele();
+
+
+        // System.out.println("\n\n");
+        // // Liga + Turniej
+        // LigaPlusTurniej ligaPTurniej1 = new LigaPlusTurniej(2, 2);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaA);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaB);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaC);
+        // ligaPTurniej1.getEtapLigi().zajerestrujDrużyne(drużynaD);
+        // ligaPTurniej1.getEtapLigi().zapiszWyniki(wynik1);
+        // ligaPTurniej1.getEtapLigi().pokażTabele();
+        // ligaPTurniej1.getEtapLigi().zwróćXDrużynPoPunktacji(1);
+
+
+
+
+        System.out.println("=== WITAMY W TURNIEJU ===");
+
+        // 1. Tworzymy obiekt mistrzostw dla 4 drużyn (1 grupa)
+        // Jeśli podasz np. 3, program od razu rzuci wyjątek ZłaLiczbaDrużynException!
+        GrupyPlusTurniej mistrzostwa = new GrupyPlusTurniej(8);
+
+        // 2. Tworzymy drużyny (Nazwa, Poziom)
+        Drużyna d1 = new Drużyna("Korsarze", 1);
+        Drużyna d2 = new Drużyna("Marynarze", 2);
+        Drużyna d3 = new Drużyna("Kosiarze", 3);
+        Drużyna d4 = new Drużyna("Lekarze", 4);
+        Drużyna d5 = new Drużyna("Knicks", 5);
+        Drużyna d6 = new Drużyna("Lakers", 6);
+        Drużyna d7 = new Drużyna("Celtics", 7);
+        Drużyna d8 = new Drużyna("Rockets", 8);
+
+        // 3. Rejestrujemy drużyny
+        mistrzostwa.zajerestrujDrużyne(d1);
+        mistrzostwa.zajerestrujDrużyne(d2);
+        mistrzostwa.zajerestrujDrużyne(d3);
+        mistrzostwa.zajerestrujDrużyne(d4);
+        mistrzostwa.zajerestrujDrużyne(d5);
+        mistrzostwa.zajerestrujDrużyne(d6);
+        mistrzostwa.zajerestrujDrużyne(d7);
+        mistrzostwa.zajerestrujDrużyne(d8);
+
+        System.out.println("Drużyny pomyślnie zarejestrowane.");
+
+        // 4. Losowanie grup (podział na koszyki i przydział)
+        System.out.println("Trwa losowanie grup...\n");
+        mistrzostwa.losujGrupy();
+
+        // 5. URUCHOMIENIE ROZGRYWEK (To tutaj program zatrzyma się i poprosi o wyniki)
+        mistrzostwa.stwórzLigi();
+
+        // 6. Podsumowanie awansów (Drukowanie list wygenerowanych w stwórzLigi)
+        System.out.println("\n=====================================");
+        System.out.println(" PODSUMOWANIE AWANSÓW DO FAZY PUCHAROWEJ");
+        System.out.println("=====================================");
+
+        System.out.println("Drużyny z pierwszych miejsc:");
+        for (Drużyna d : mistrzostwa.getListaPierwszychMiejsc()) {
+            System.out.println(" 🥇 " + d.getNazwa() + " (Poziom: " + d.getPoziomDrużyny() + ")");
         }
-        turniej1.pokażTabele();
+
+        System.out.println("\nDrużyny z drugich miejsc:");
+        for (Drużyna d : mistrzostwa.getListaDrugichMiejsc()) {
+            System.out.println(" 🥈 " + d.getNazwa() + " (Poziom: " + d.getPoziomDrużyny() + ")");
+        }
+
+        // 7. (W przyszłości) Wywołanie fazy pucharowej
+        mistrzostwa.fazapucharowa();
     }
 }
