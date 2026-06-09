@@ -350,6 +350,47 @@ class Liga extends Rozgrywka {
         return topDrużyny;
     }
 }
+class LigaPlusTurniej extends Turniej {
+    private int liczbaDrużynDoEtapuTurnieju;
+    private Liga etapLigi;
+
+    public LigaPlusTurniej(Liga etapLigi, int liczbaDrużynDoEtapuTurnieju) {
+        super();
+        this.etapLigi = etapLigi;
+        this.liczbaDrużynDoEtapuTurnieju = liczbaDrużynDoEtapuTurnieju;
+    }
+    public void przygotujTurniej() throws ZłaLiczbaDrużynException, ZaDużoDoZwróceniaException {
+        int n = liczbaDrużynDoEtapuTurnieju;
+        if ((n & n-1) != 0) {
+            throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki");
+        }
+        ArrayList<Drużyna> topDrużyny = etapLigi.zwróćXDrużynPoPunktacji(n);
+
+        for (int i = 0; i < topDrużyny.size(); i++) {
+            zajerestrujDrużyne(topDrużyny.get(i));
+        }
+        for (int i = 0; i < n / 2; i++) {
+            Drużyna najlepsza = topDrużyny.get(i);
+            Drużyna najgorsza = topDrużyny.get(n - 1 - i);
+
+            ArrayList<Drużyna> para = new ArrayList<>();
+            para.add(najlepsza);
+            para.add(najgorsza);
+
+            getListaParDrużyn().add(para);
+        }
+        int ilePar = getListaParDrużyn().size();
+        int liczbaRund=0;
+        while (ilePar > 0) {
+            liczbaRund=liczbaRund+1;            
+            ilePar = ilePar / 2; 
+        }
+    }
+
+
+
+}
+
 
 class Drużyna {
     private String nazwa;
