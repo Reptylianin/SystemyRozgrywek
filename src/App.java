@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 class ZaDużoDoZwróceniaException extends Exception {
     public ZaDużoDoZwróceniaException(String message) {super(message);}
@@ -33,6 +30,10 @@ class ZaMałoZwyciezcowException extends Exception {
 
 class ZłyWynikKarnychException extends Exception {
     public ZłyWynikKarnychException(String message) {super(message);}
+}
+
+class RozgrywkaNieZakończonaException extends Exception {
+    public RozgrywkaNieZakończonaException(String message) {super(message);}
 }
 
 class Rozgrywka {
@@ -79,12 +80,14 @@ class TurniejeZbiorowo extends Rozgrywka {
     private ArrayList<ArrayList<Drużyna>> listaParDrużyn;
     private HashMap<Integer,Drużyna> listaZwycięzcówRundy;
     protected int liczbaRund = 0;
+    private HashMap<String, String> historiaOdpadniec = new HashMap<>();
 
     public TurniejeZbiorowo() {
         super();
         this.listaParDrużyn = new ArrayList<ArrayList<Drużyna>>();
         this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
     }
+    public HashMap<String, String> getHistoriaOdpadniec() {return historiaOdpadniec;}
     public void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException {
         if ((listaDrużynDoPar.size() & listaDrużynDoPar.size() - 1)  != 0) {
             throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki");
@@ -133,10 +136,22 @@ class TurniejeZbiorowo extends Rozgrywka {
             int n = scanner.nextInt();
             //scanner.close();
             if (n == 1) {
-                zwycięzca = wynikMeczu.getDrużyna1();   
+                zwycięzca = wynikMeczu.getDrużyna1();
+                Drużyna przegrany = wynikMeczu.getDrużyna2();
+                int etap = getListaParDrużyn().size();
+                String etapOdpadnięcia = null;
+                if (etap == 1) {etapOdpadnięcia = "Finał";}
+                else {etapOdpadnięcia = "1/" + etap + " finału";}
+                historiaOdpadniec.put(przegrany.getNazwa(), etapOdpadnięcia);
             }
             else {
                 zwycięzca = wynikMeczu.getDrużyna2();
+                Drużyna przegrany = wynikMeczu.getDrużyna1();
+                int etap = getListaParDrużyn().size();
+                String etapOdpadnięcia = null;
+                if (etap == 1) {etapOdpadnięcia = "Finał";}
+                else {etapOdpadnięcia = "1/" + etap + " finału";}
+                historiaOdpadniec.put(przegrany.getNazwa(), etapOdpadnięcia);
             }
         }
         ArrayList<Drużyna> paraDrużyn = new ArrayList<Drużyna>();
@@ -168,6 +183,7 @@ class TurniejeZbiorowo extends Rozgrywka {
 
 class Turniej extends TurniejeZbiorowo {
     private int obecnaRunda = 0;
+    private Drużyna mistrz = null;
 
     public Turniej() {
         super();
@@ -205,6 +221,7 @@ class Turniej extends TurniejeZbiorowo {
         if (getListaZwycięzcówRundy().size() == 1) {
             for (Drużyna drużynaZwycięska : getListaZwycięzcówRundy().values()) {
                 System.out.println("Zwycięzca to: " + drużynaZwycięska.getNazwa());
+                this.mistrz = drużynaZwycięska;
             }
         }
         getListaZwycięzcówRundy().clear();
@@ -234,6 +251,28 @@ class Turniej extends TurniejeZbiorowo {
         if (liczbaRund != 0) {
             liczbaRund += 1;
         }
+    }
+
+    public Drużyna pobierzZwycięzce() throws RozgrywkaNieZakończonaException{
+        if (mistrz == null) {throw new RozgrywkaNieZakończonaException("Rozgrywka jeszcze się nie skończyła");}
+        else {return mistrz;}
+    }
+
+    public String zwrócInfoDoArchiwum() throws RozgrywkaNieZakończonaException {
+        StringBuilder info = new StringBuilder();
+        Drużyna mistrz = pobierzZwycięzce();
+        HashMap<String,String> odpadnięcia = getHistoriaOdpadniec();
+        info.append("RAPORT TURNIEJOWY\n");
+        info.append("Mistrz: " + mistrz.getNazwa() + "\n");
+        info.append("Uczestnicy:\n");
+
+        for (Drużyna d : listaDrużyn) {
+            info.append(d.getNazwa());
+            if (odpadnięcia.containsKey(d.getNazwa())) {info.append("Odpadli w: " + odpadnięcia.get(d.getNazwa()) + "\n");}
+            info.append("\n");
+        }
+
+        return info.toString();
     }
 }
 
@@ -411,7 +450,15 @@ class Liga extends Rozgrywka {
         }
     }
     //--------------------------------------------------------------------------------------
+    public Drużyna pobierzZwycięzce() throws RozgrywkaNieZakończonaException, ZaDużoDoZwróceniaException {
+        int liczbaDrużyn = getListaDrużyn().size();
+        int liczbaMeczow = (liczbaDrużyn * (liczbaDrużyn - 1)) / 2 * getLiczbaMeczyBezpośrednich();
+        int rozegraneMecze = getListaWyników().size();
 
+        if (rozegraneMecze < liczbaMeczow) {throw new RozgrywkaNieZakończonaException("Liga jeszcze się nie skończyła");}
+
+        return zwróćXDrużynPoPunktacji(1).get(0);
+    }
 }
 
 class GrupyPlusTurniej extends TurniejeZbiorowo {
