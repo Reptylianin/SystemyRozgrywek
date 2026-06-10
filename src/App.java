@@ -172,12 +172,21 @@ class TurniejeZbiorowo extends Rozgrywka {
     private HashMap<Integer,Drużyna> listaZwycięzcówRundy;
     private int liczbaRund = 0;
     private int obecnaRunda = 0;
+    private Scanner turniejeScanner;
 
     public TurniejeZbiorowo() {
         super();
         this.listaParDrużyn = new ArrayList<ArrayList<Drużyna>>();
         this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
+        this.turniejeScanner = new Scanner(System.in);
     }
+    public TurniejeZbiorowo(Scanner scanner) {
+        super();
+        this.listaParDrużyn = new ArrayList<ArrayList<Drużyna>>();
+        this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
+        this.turniejeScanner = scanner;
+    }
+    
     public void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException, RozgrywkaRozpoczętaException, ZaMałoDrużynException {
         if ((listaDrużynDoPar.size() & listaDrużynDoPar.size() - 1)  != 0) {
             throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki.");
@@ -225,13 +234,11 @@ class TurniejeZbiorowo extends Rozgrywka {
 
         Drużyna zwycięzca = wynikMeczu.getZwycięzcaMeczu();
         if (zwycięzca == null) {
-            // RemisException
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Podaj która drużyna wygrywa karne(1 lub 2): \n");
-            int n = scanner.nextInt();
-            scanner.close();
-            if (n == 1) {
-                zwycięzca = wynikMeczu.getDrużyna1();   
+            System.out.print("Podaj która drużyna wygrywa karne (1 jeśli pierwsza, inne jeśli 2):");
+            String n = turniejeScanner.nextLine();
+            // turniejeScanner.close();
+            if (n.equals("1")) {
+                zwycięzca = wynikMeczu.getDrużyna1();
             }
             else {
                 zwycięzca = wynikMeczu.getDrużyna2();
@@ -287,6 +294,9 @@ class Turniej extends TurniejeZbiorowo {
 
     public Turniej() {
         super();
+    }
+    public Turniej(Scanner turniejScanner) {
+        super(turniejScanner);
     }
     @Override
     public void pokażTabele() throws RozgrywkaNieZakończonaException {
@@ -980,7 +990,7 @@ class Menu {
         }
     }
     public void przeprowadźTurniej(Scanner scanner) throws ProjektowyException {
-        Turniej turniej = new Turniej();
+        Turniej turniej = new Turniej(scanner);
         String command = "";
         while (!command.equals("stop")) {
             System.out.println("\n1.Zarejestruj drużynę.\n2.Zacznij rozgrywkę.\n(stop - aby zakończyć):");
