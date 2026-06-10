@@ -7,6 +7,14 @@ class ProjektowyException extends Exception {
     public ProjektowyException(String message) {super(message);}
 }
 
+class DrużynaJużZagrałaMeczException extends ProjektowyException {
+    public DrużynaJużZagrałaMeczException(String message) {super(message);}
+}
+
+class ZaMałoDrużynException extends ProjektowyException {
+    public ZaMałoDrużynException(String message) {super(message);}
+}
+
 class BrakTakiejDrużynyException extends ProjektowyException {
     public BrakTakiejDrużynyException(String message) {super(message);}
 }
@@ -21,6 +29,10 @@ class RozgrywkaNieZakończonaException extends ProjektowyException {
 
 class RozgrywkaRozpoczętaException extends ProjektowyException {
     public RozgrywkaRozpoczętaException(String message) {super(message);}
+}
+
+class RozgrywkaNieRozpoczętaException extends ProjektowyException {
+    public RozgrywkaNieRozpoczętaException(String message) {super(message);}
 }
 
 class ZaDużoDoZwróceniaException extends ProjektowyException {
@@ -106,7 +118,7 @@ class Rozgrywka {
         if (stanKońca == false) {
             throw new RozgrywkaNieZakończonaException("Jeszcze nie zakończono rozgrywki.");
         }
-        String caleInfo = "Punkty\n";
+        String caleInfo = "\nRozgrywka\nPunkty\n";
 
         for (int i = 0; i < getListaDrużyn().size(); i++) {
             Drużyna aktualnaDrużyna = getListaDrużyn().get(i);
@@ -145,7 +157,7 @@ class Rozgrywka {
         return stanRozpoczęcia;
     }
     public void zmieńStanRozpoczęcia() {
-        stanKońca = true;
+        stanRozpoczęcia = true;
     }
     public boolean getStanKońca() {
         return stanKońca;
@@ -166,9 +178,15 @@ class TurniejeZbiorowo extends Rozgrywka {
         this.listaParDrużyn = new ArrayList<ArrayList<Drużyna>>();
         this.listaZwycięzcówRundy = new HashMap<Integer,Drużyna>();
     }
-    public void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException {
+    public void losujParyDrużyn(ArrayList<Drużyna> listaDrużynDoPar) throws ZłaLiczbaDrużynException, RozgrywkaRozpoczętaException, ZaMałoDrużynException {
         if ((listaDrużynDoPar.size() & listaDrużynDoPar.size() - 1)  != 0) {
-            throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki");
+            throw new ZłaLiczbaDrużynException("Podano złą liczbę drużyn, musi ona być potęgą dwójki.");
+        }
+        if (listaDrużynDoPar.size() < 2) {
+            throw new ZaMałoDrużynException("Podano za małą liczbę drużyn, musi ona być większa niż 1.");
+        }
+        if (getStanRozpoczęcia() == true) {
+            throw new RozgrywkaRozpoczętaException("Już rozpoczęto rozgrywkę.");
         }
         ArrayList<Drużyna> posortowaneDrużyny = new ArrayList<>(listaDrużynDoPar);
         posortowaneDrużyny.sort((d1, d2) -> Integer.compare(d1.getPoziomDrużyny(), d2.getPoziomDrużyny()));
@@ -183,16 +201,21 @@ class TurniejeZbiorowo extends Rozgrywka {
             P--;
         }
         obliczIUstawLiczbęRund();
+        zmieńStanRozpoczęcia();
     }
     @Override
-    public void zapiszWyniki(Wynik wynikMeczu) throws ZłaParaDrużynException, ZaDużoMeczyWRundzieException {
+    public void zapiszWyniki(Wynik wynikMeczu) throws ZłaParaDrużynException, ZaDużoMeczyWRundzieException, RozgrywkaNieRozpoczętaException, DrużynaJużZagrałaMeczException {
         if (getListaZwycięzcówRundy().size() >= getListaParDrużyn().size()) {
             throw new ZaDużoMeczyWRundzieException("Za dużo zwycięzców w rundzie");
         }
-        zmieńStanRozpoczęcia();
+        if (getStanRozpoczęcia() == false) {
+            throw new RozgrywkaNieRozpoczętaException("Jeszcze nie wylosowano drużyn.");
+        }
         String nazwaDrużyny1 = wynikMeczu.getDrużyna1().getNazwa();
         String nazwaDrużyny2 = wynikMeczu.getDrużyna2().getNazwa();
-
+        if (listaZwycięzcówRundy.containsValue(getDrużynaPoNazwie(nazwaDrużyny1))||listaZwycięzcówRundy.containsValue(getDrużynaPoNazwie(nazwaDrużyny2))) {
+            throw new DrużynaJużZagrałaMeczException("Jedna z drużyn już zagrała mecz w tej rundzie.");
+        }
         ArrayList<Integer> punkty = wynikMeczu.punktyZaMecz();
         
         Integer punktyDrużyny1 = getListaPunktów().get(nazwaDrużyny1);
@@ -223,11 +246,11 @@ class TurniejeZbiorowo extends Rozgrywka {
             }
         }
         for (int i = 0; i < getListaParDrużyn().size(); i++){
-            // Zamiast pytać wynikMeczu, używamy naszej zmiennej lokalnej 'zwycięzca'
             if (getListaParDrużyn().get(i).contains(zwycięzca)) {
-                zmieńStanKońca();
+                listaZwycięzcówRundy.put(i, zwycięzca);
             }
         }
+        getListaWyników().add(wynikMeczu);
     }
 
     public void obliczIUstawLiczbęRund() {
@@ -260,6 +283,7 @@ class TurniejeZbiorowo extends Rozgrywka {
 }
 
 class Turniej extends TurniejeZbiorowo {
+    private String zwycięzca;
 
     public Turniej() {
         super();
@@ -273,13 +297,12 @@ class Turniej extends TurniejeZbiorowo {
             System.out.println(wynikIMeczu.getDrużyna1().getNazwa() + " vs " + wynikIMeczu.getDrużyna2().getNazwa());
             System.out.println(wynikIMeczu.getWynik1() + " : " + wynikIMeczu.getWynik2());
         }
-        System.out.println("\n\n" + getListaPunktów());
     };
     public void przejdźDoNastępnejRundy() throws ZaDużoRundException, ZaMałoZwyciezcowException {
-        if (getObecnaRunda() == getLiczbaRund()) {
+        if (getObecnaRunda() > getLiczbaRund()) {
             throw new ZaDużoRundException("Za dużo rund (powinien być już zwycięzca)");
         }
-        if (getListaZwycięzcówRundy().size() == getListaParDrużyn().size()/2) {
+        if (getListaZwycięzcówRundy().size() <= getListaParDrużyn().size()/2) {
             throw new ZaMałoZwyciezcowException("Zbyt mało zwycięzców rund żeby przejść do następnej rundy");
         }
         getListaParDrużyn().clear();
@@ -299,10 +322,29 @@ class Turniej extends TurniejeZbiorowo {
         }
         if (getListaZwycięzcówRundy().size() == 1) {
             for (Drużyna drużynaZwycięska : getListaZwycięzcówRundy().values()) {
+                zwycięzca = drużynaZwycięska.getNazwa();
                 System.out.println("Zwycięzca to: " + drużynaZwycięska.getNazwa());
+                zmieńStanKońca();
             }
         }
         getListaZwycięzcówRundy().clear();
+    }
+    @Override
+    public String getCaleInfo() throws RozgrywkaNieZakończonaException {
+        if (getStanKońca() == false) {
+            throw new RozgrywkaNieZakończonaException("Jeszcze nie zakończono rozgrywki.");
+        }
+        String caleInfo = "\nTurniej\n";
+        
+        caleInfo += "Rozegrane Mecze\n";
+        for (int i = 0; i < getListaWyników().size(); i++) {
+            Wynik w = getListaWyników().get(i);
+
+            caleInfo += w.getDrużyna1().getNazwa() + " " + w.getWynik1() + ":" + w.getWynik2() + " " + w.getDrużyna2().getNazwa() + "\n";
+        }
+        caleInfo += "\nZwycięzca:\n";
+        caleInfo += zwycięzca + "\n";
+        return caleInfo;
     }
 }
 
@@ -644,7 +686,7 @@ class GrupyPlusTurniej extends TurniejeZbiorowo {
         }
     }
 
-    protected void fazapucharowa() throws ZaDużoMeczyWRundzieException, ZłaParaDrużynException, ZaMałoZwyciezcowException, ZaDużoRundException, RozgrywkaRozpoczętaException {
+    protected void fazapucharowa() throws ZaDużoMeczyWRundzieException, ZłaParaDrużynException, ZaMałoZwyciezcowException, ZaDużoRundException, RozgrywkaRozpoczętaException, RozgrywkaNieRozpoczętaException, DrużynaJużZagrałaMeczException {
         TurniejGrupowy fazaPucharowa = new TurniejGrupowy();
 
         for (Drużyna d : listaPierwszychMiejsc) {
@@ -676,6 +718,9 @@ class GrupyPlusTurniej extends TurniejeZbiorowo {
                 bramki.add(goleD2);
 
                 Wynik wynikMeczu = new Wynik(d1, d2, bramki);
+                if (getListaZwycięzcówRundy().containsValue(d1)||getListaZwycięzcówRundy().containsValue(d2)) {
+                    throw new DrużynaJużZagrałaMeczException("Jedna z drużyn zagrała już mecz w tej rundzie.");
+                }
                 fazaPucharowa.zapiszWyniki(wynikMeczu);
             }
             fazaPucharowa.przejdźDoNastępnejRundy();
@@ -770,16 +815,16 @@ class Menu {
         Scanner menuScanner = new Scanner(System.in);
         String command = "";
         while (!command.equals("koniec")) {
-            System.out.println("\n1.Utwórz rozgrywkę.\n2.Przejrzyj archiwum.\n(koniec - aby zakończyć):");
+            System.out.print("\n1.Utwórz rozgrywkę.\n2.Przejrzyj archiwum.\n(koniec - aby zakończyć):");
             command = menuScanner.nextLine();
             switch (command) {
                 case "1":
-                    System.out.println("\n1.Liga.\n2.Turniej.\n2.Liga+Turniej.\n2.Grupy+Turniej.\n:");
+                    System.out.print("\n1.Liga.\n2.Turniej.\n2.Liga+Turniej.\n2.Grupy+Turniej.\n:");
                     command = menuScanner.nextLine();
                     switch (command) {
                         case "1":
                             int liczbaMeczBezpośrednichOdpowiedź;
-                            System.out.println("\nPodaj liczbę meczy bezpośrednich:\n:");
+                            System.out.println("\nPodaj liczbę meczy bezpośrednich:");
                             try {
                                 liczbaMeczBezpośrednichOdpowiedź = Integer.parseInt(menuScanner.nextLine());
                             }catch (NumberFormatException e){
@@ -848,9 +893,9 @@ class Menu {
                 case "1":
                     String rejestracjaOdpowiedź1 = "";
                     int rejestracjaOdpowiedź2;
-                    System.out.println("\nPodaj nazwę drużyny:\n:");
+                    System.out.println("\nPodaj nazwę drużyny:");
                     rejestracjaOdpowiedź1 = scanner.nextLine();
-                    System.out.println("\nPodaj poziom drużyny:\n:");
+                    System.out.println("\nPodaj poziom drużyny:");
                     try {
                         rejestracjaOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                         Drużyna d = new Drużyna(rejestracjaOdpowiedź1, rejestracjaOdpowiedź2);
@@ -875,18 +920,18 @@ class Menu {
                                 String drużynaNazwaOdpowiedź2 = "";
                                 int drużynaGoleOdpowiedź1;
                                 int drużynaGoleOdpowiedź2;
-                                System.out.println("\nPodaj nazwę drużyny 1:\n:");
+                                System.out.println("\nPodaj nazwę drużyny 1:");
                                 drużynaNazwaOdpowiedź1 = scanner.nextLine();
-                                System.out.println("\nPodaj gole drużyny 1:\n:");
+                                System.out.println("\nPodaj gole drużyny 1:");
                                 try {
                                     drużynaGoleOdpowiedź1 = Integer.parseInt(scanner.nextLine());
                                 }catch (NumberFormatException e){
                                     System.out.println("Niepoprawna liczba goli.");
                                     break;
                                 }
-                                System.out.println("\nPodaj nazwę drużyny 2:\n:");
+                                System.out.println("\nPodaj nazwę drużyny 2:");
                                 drużynaNazwaOdpowiedź2 = scanner.nextLine();
-                                System.out.println("\nPodaj gole drużyny 2:\n:");
+                                System.out.println("\nPodaj gole drużyny 2:");
                                 try {
                                     drużynaGoleOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                                 }catch (NumberFormatException e){
@@ -944,9 +989,9 @@ class Menu {
                 case "1":
                     String rejestracjaOdpowiedź1 = "";
                     int rejestracjaOdpowiedź2;
-                    System.out.println("\nPodaj nazwę drużyny:\n:");
+                    System.out.println("\nPodaj nazwę drużyny:");
                     rejestracjaOdpowiedź1 = scanner.nextLine();
-                    System.out.println("\nPodaj poziom drużyny:\n:");
+                    System.out.println("\nPodaj poziom drużyny:");
                     try {
                         rejestracjaOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                         Drużyna d = new Drużyna(rejestracjaOdpowiedź1, rejestracjaOdpowiedź2);
@@ -962,14 +1007,14 @@ class Menu {
                     break;
                 case "2":
                     while (!command.equals("stop")) {
-                        System.out.println("\n1.Losuj pary drużyny.\n2.Zapisz wynik.\n3.Pokaż tabele.\n4.Zapisz do archiwum.\n(stop - aby zakończyć):");
+                        System.out.print("\n1.Losuj pary drużyny.\n2.Zapisz wynik.\n3.Przejdź do następnej rundy.\n4.Pokaż tabele.\n5.Zapisz do archiwum.\n(stop - aby zakończyć):");
                         command = scanner.nextLine();
                         switch (command) {
                             case "1":
                                 try {
                                     turniej.losujParyDrużyn(turniej.getListaDrużyn());
                                 } catch (ProjektowyException e) {
-                                    System.out.println("Niepoprawna liczba drużyn.");
+                                    System.out.println(e);
                                 }
                                 break;
                             case "2":
@@ -978,18 +1023,18 @@ class Menu {
                                 String drużynaNazwaOdpowiedź2 = "";
                                 int drużynaGoleOdpowiedź1;
                                 int drużynaGoleOdpowiedź2;
-                                System.out.println("\nPodaj nazwę drużyny 1:\n:");
+                                System.out.println("\nPodaj nazwę drużyny 1:");
                                 drużynaNazwaOdpowiedź1 = scanner.nextLine();
-                                System.out.println("\nPodaj gole drużyny 1:\n:");
+                                System.out.println("\nPodaj gole drużyny 1:");
                                 try {
                                     drużynaGoleOdpowiedź1 = Integer.parseInt(scanner.nextLine());
                                 }catch (NumberFormatException e){
                                     System.out.println("Niepoprawna liczba goli.");
                                     break;
                                 }
-                                System.out.println("\nPodaj nazwę drużyny 2:\n:");
+                                System.out.println("\nPodaj nazwę drużyny 2:");
                                 drużynaNazwaOdpowiedź2 = scanner.nextLine();
-                                System.out.println("\nPodaj gole drużyny 2:\n:");
+                                System.out.println("\nPodaj gole drużyny 2:");
                                 try {
                                     drużynaGoleOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                                 }catch (NumberFormatException e){
@@ -1004,12 +1049,19 @@ class Menu {
                                 break;
                             case "3":
                                 try {
-                                    turniej.pokażTabele();
+                                    turniej.przejdźDoNastępnejRundy();
                                 } catch (ProjektowyException e) {
                                     System.out.println(e);
                                 }
                                 break;
                             case "4":
+                                try {
+                                    turniej.pokażTabele();
+                                } catch (ProjektowyException e) {
+                                    System.out.println(e);
+                                }
+                                break;
+                            case "5":
                                 try {
                                     archiwum.add(turniej.getCaleInfo());
                                 } catch (ProjektowyException e) {
