@@ -626,7 +626,7 @@ class LigaPlusTurniej extends Turniej {
     }
 }
 
-class GrupyPlusTurniej extends TurniejeZbiorowo {
+class GrupyPlusTurniej extends Turniej {
     private int liczbaGrup;
 
     private ArrayList<ArrayList<Drużyna>> listaKoszyków = new ArrayList<>();
@@ -634,6 +634,7 @@ class GrupyPlusTurniej extends TurniejeZbiorowo {
 
     private ArrayList<Drużyna> listaPierwszychMiejsc = new ArrayList<>();
     private ArrayList<Drużyna> listaDrugichMiejsc = new ArrayList<>();
+    private boolean trybPucharowy = false;
 
     GrupyPlusTurniej(int liczbaDrużyn) throws ZłaLiczbaDrużynException {
         super();
@@ -671,6 +672,19 @@ class GrupyPlusTurniej extends TurniejeZbiorowo {
             }
             listaGrup.add(grupa);
         }
+        getListaParDrużyn().clear();
+        for (ArrayList<Drużyna> grupa : listaGrup) {
+            for (int i = 0; i < grupa.size(); i++) {
+                for (int j = i + 1; j < grupa.size(); j++) {
+                    ArrayList<Drużyna> para = new ArrayList<>();
+                    para.add(grupa.get(i));
+                    para.add(grupa.get(j));
+                    getListaParDrużyn().add(para);
+                }
+            }
+        }
+        obliczIUstawLiczbęRund();
+        trybPucharowy = false;
         System.out.println("Zakończono losowanie do grup");
     }
 
@@ -738,9 +752,6 @@ class GrupyPlusTurniej extends TurniejeZbiorowo {
                 bramki.add(goleD2);
 
                 Wynik wynikMeczu = new Wynik(d1, d2, bramki);
-                if (getListaZwycięzcówRundy().containsValue(d1)||getListaZwycięzcówRundy().containsValue(d2)) {
-                    throw new DrużynaJużZagrałaMeczException("Jedna z drużyn zagrała już mecz w tej rundzie.");
-                }
                 fazaPucharowa.zapiszWyniki(wynikMeczu);
             }
             fazaPucharowa.przejdźDoNastępnejRundy();
@@ -749,13 +760,35 @@ class GrupyPlusTurniej extends TurniejeZbiorowo {
                 break;
             }
         }
-        scanner.close();
     }
     public ArrayList<Drużyna> getListaPierwszychMiejsc() {
         return listaPierwszychMiejsc;
     }
     public ArrayList<Drużyna> getListaDrugichMiejsc() {
         return listaDrugichMiejsc;
+    }
+    public void generujParyPucharowe() {
+        listaPierwszychMiejsc.clear();
+        listaDrugichMiejsc.clear();
+
+        for (ArrayList<Drużyna> grupa : listaGrup) {
+            ArrayList<Drużyna> s = new ArrayList<>(grupa);
+            s.sort((d1, d2) -> Integer.compare(getListaPunktów().get(d2.getNazwa()), getListaPunktów().get(d1.getNazwa())));
+            listaPierwszychMiejsc.add(s.get(0));
+            listaDrugichMiejsc.add(s.get(1));
+        }
+
+        getListaParDrużyn().clear();
+        int iloscPar = listaPierwszychMiejsc.size();
+        for (int i = 0; i < iloscPar; i++) {
+            ArrayList<Drużyna> para = new ArrayList<>();
+            para.add(listaPierwszychMiejsc.get(i));
+            para.add(listaDrugichMiejsc.get((i + 1) % iloscPar));
+            getListaParDrużyn().add(para);
+        }
+        obliczIUstawLiczbęRund();
+        trybPucharowy = true;
+        System.out.println("Wygenerowano pary pucharowe");
     }
 }
 
@@ -839,7 +872,7 @@ class Menu {
             command = menuScanner.nextLine();
             switch (command) {
                 case "1":
-                    System.out.print("\n1.Liga.\n2.Turniej.\n2.Liga+Turniej.\n2.Grupy+Turniej.\n:");
+                    System.out.print("\n1.Liga.\n2.Turniej.\n3.Liga+Turniej.\n4.Grupy+Turniej.\n:");
                     command = menuScanner.nextLine();
                     switch (command) {
                         case "1":
@@ -897,8 +930,8 @@ class Menu {
                                 break;
                             }
                             try {
-                                przeprowadźGrupyPlusTurniej(liczbaDrużynOdpowiedź);
-                            } catch (ProjektowyException e) {
+                                przeprowadźGrupyPlusTurniej(menuScanner,liczbaDrużynOdpowiedź);
+                            } catch (Exception e) {
                                 System.out.println(e);
                             }
                             break;
@@ -940,7 +973,10 @@ class Menu {
                         rejestracjaOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                         Drużyna d = new Drużyna(rejestracjaOdpowiedź1, rejestracjaOdpowiedź2);
                         liga.zajerestrujDrużyne(d);
-                        System.out.println(liga.getListaDrużyn());
+                        System.out.println("Drużyny:");
+                        for (Drużyna dr : liga.getListaDrużyn()) {
+                            System.out.print(dr.getNazwa() + " ");
+                        }
                     }catch (NumberFormatException e){
                         System.out.println("Niepoprawny poziom drużyny.");
                         break;
@@ -1036,7 +1072,10 @@ class Menu {
                         rejestracjaOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                         Drużyna d = new Drużyna(rejestracjaOdpowiedź1, rejestracjaOdpowiedź2);
                         turniej.zajerestrujDrużyne(d);
-                        System.out.println(turniej.getListaDrużyn());
+                        System.out.println("Drużyny:");
+                        for (Drużyna dr : turniej.getListaDrużyn()) {
+                            System.out.print(dr.getNazwa() + " ");
+                        }
                     }catch (NumberFormatException e){
                         System.out.println("Niepoprawny poziom drużyny.");
                         break;
@@ -1228,7 +1267,10 @@ class Menu {
                         rejestracjaOdpowiedź2 = Integer.parseInt(scanner.nextLine());
                         Drużyna d = new Drużyna(rejestracjaOdpowiedź1, rejestracjaOdpowiedź2);
                         etapLigi.zajerestrujDrużyne(d);
-                        System.out.println(etapLigi.getListaDrużyn());
+                        System.out.println("Drużyny:");
+                        for (Drużyna dr : etapLigi.getListaDrużyn()) {
+                            System.out.print(dr.getNazwa() + " ");
+                        }
                     }catch (NumberFormatException e){
                         System.out.println("Niepoprawny poziom drużyny.");
                         break;
@@ -1310,9 +1352,9 @@ class Menu {
             }
         }
     }
-    public void przeprowadźGrupyPlusTurniej(int liczbaDrużyn) throws ProjektowyException {
+    public void przeprowadźGrupyPlusTurniej(Scanner scanner,int liczbaDrużyn) throws Exception {
         GrupyPlusTurniej turniej = new GrupyPlusTurniej(liczbaDrużyn);
-        Scanner rozrywkaScanner = new Scanner(System.in);
+        Scanner rozrywkaScanner = scanner;
         String command = "";
         while (!command.equals("stop")) {
             System.out.println("\n1.Zarejestruj drużynę.\n2.Zacznij rozgrywkę.\n(stop - aby zakończyć):");
@@ -1328,7 +1370,10 @@ class Menu {
                         rejestracjaOdpowiedź2 = Integer.parseInt(rozrywkaScanner.nextLine());
                         Drużyna d = new Drużyna(rejestracjaOdpowiedź1, rejestracjaOdpowiedź2);
                         turniej.zajerestrujDrużyne(d);
-                        System.out.println(turniej.getListaDrużyn());
+                        System.out.println("Drużyny:");
+                        for (Drużyna dr : turniej.getListaDrużyn()) {
+                            System.out.print(dr.getNazwa() + " ");
+                        }
                     }catch (NumberFormatException e){
                         System.out.println("Niepoprawny poziom drużyny.");
                         break;
@@ -1338,11 +1383,63 @@ class Menu {
                     }
                     break;
                 case "2":
-                    String odpowiedź1 = "";
-                    System.out.println("\nPodaj nazwę drużyny:\n:");
-                    switch (odpowiedź1) {
-                        
+                    if (turniej.getListaDrużyn().size() != liczbaDrużyn) {
+                        System.out.println("Niepoprawna liczba drużyn");
                     }
+                    else {
+                        while (!command.equals("stop")) {
+                            System.out.println("\nLista par/meczów do rozegrania: " + turniej.getListaParDrużyn());
+                            for (ArrayList<Drużyna> para : turniej.getListaParDrużyn()) {
+                                System.out.println("[" + para.get(0).getNazwa() + ", " + para.get(0).getNazwa() + "]");
+                            }
+                            System.out.println("1.Losuj grupy startowe.\n2.Zapisz wynik.\n3.Pokaż tabele.\n4.Generuj pary pucharowe.\n5.Przejdź do następnej rundy.\n6.Zapisz do archiwum.\n(stop - aby zakończyć):");
+                            command = rozrywkaScanner.nextLine();
+                            switch (command) {
+                                case "1":
+                                    turniej.losujGrupy();
+                                    break;
+                                case "2":
+                                    System.out.println("\nWprowadzanie wyniku:\n");
+                                    String drużynaNazwaOdpowiedź1 = rozrywkaScanner.nextLine();
+                                    System.out.println("\nPodaj gole drużyny 1:\n:");
+                                    int g1 = Integer.parseInt(rozrywkaScanner.nextLine());
+                                    System.out.println("\nPodaj nazwę drużyny 2:\n:");
+                                    String d2 = rozrywkaScanner.nextLine();
+                                    System.out.println("\nPodaj gole drużyny 2:\n:");
+                                    int g2 = Integer.parseInt(rozrywkaScanner.nextLine());
+
+                                    try {
+                                        turniej.stworzIZapiszWyniki(turniej.getDrużynaPoNazwie(drużynaNazwaOdpowiedź1), turniej.getDrużynaPoNazwie(d2), g1, g2);
+                                        System.out.println("Zapisano wynik meczu!");
+                                    } catch (Exception e) {
+                                        System.out.println(e);
+                                    }
+                                    break;
+                                case "3":
+                                    try { turniej.pokażTabele(); } catch (Exception e) { System.out.println(e); }
+                                    break;
+                                case "4":
+                                    try { turniej.generujParyPucharowe(); } catch (Exception e) { System.out.println(e); }
+                                    break;
+                                case "5":
+                                    try { turniej.przejdźDoNastępnejRundy(); } catch (Exception e) { System.out.println(e); }
+                                    break;
+                                case "6":
+                                    try {
+                                        archiwum.add(turniej.getCaleInfo());
+                                        System.out.println("Zapisano do archiwum!");
+                                    } catch (Exception e) { System.out.println(e); }
+                                    break;
+                                case "stop":
+                                    break;
+                                default:
+                                    System.out.println("Brak komendy.");
+                                    break;
+                            }
+                        }
+                        command = "";
+                    }
+                    command = "";
                     break;
                 case "stop":
                     break;
@@ -1351,7 +1448,6 @@ class Menu {
                     break;
             }
         }
-        rozrywkaScanner.close();
     }
 }
 
